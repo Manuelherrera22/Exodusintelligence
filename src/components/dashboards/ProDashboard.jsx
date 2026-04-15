@@ -2,317 +2,183 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Map, Compass, FileText, BrainCircuit, ShieldCheck, Award, Sparkles, UserCheck, ArrowRight, Briefcase } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
+import { Compass, FileText, BrainCircuit, ShieldCheck, Award, Sparkles, UserCheck, ArrowRight, Briefcase, Target, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import GridPattern from '@/components/GridPattern';
-import KaiAssistantBubble from '@/components/KaiAssistantBubble';
 import { useSupabaseDashboard } from '@/hooks/useSupabaseDashboard.js';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from 'recharts';
-import RouteSelectorWidget from '@/components/pro/RouteSelectorWidget';
+import ProChat from '@/components/pro/ProChat';
 
-const FeatureCard = ({ icon: Icon, title, description, ctaText, onAction, delay = 0, status, tooltipContent }) => {
-    const { t } = useTranslation('dashboard');
+const PremiumScoreRing = ({ score }) => {
+    const radius = 60;
+    const circumference = 2 * Math.PI * radius;
+    const strokeDashoffset = circumference - (score / 100) * circumference;
+
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay, type: "spring", stiffness: 300 }}
-            className="bg-slate-800/50 p-6 rounded-2xl h-full flex flex-col justify-between border border-fuchsia-500/20 hover:border-fuchsia-500/50 transition-all cursor-pointer hover-glow"
-            onClick={onAction}
-        >
-            <div>
-                <div className="flex justify-between items-start">
-                     <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <div className="p-3 bg-fuchsia-500/10 rounded-lg">
-                                    <Icon className="w-8 h-8 text-fuchsia-400" />
-                                </div>
-                            </TooltipTrigger>
-                            {tooltipContent && (
-                               <TooltipContent className="bg-slate-800 text-white border-fuchsia-500/50 max-w-xs">
-                                    <p>{tooltipContent}</p>
-                                </TooltipContent>
-                            )}
-                        </Tooltip>
-                    </TooltipProvider>
-
-                    {status && <span className="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded-full font-semibold flex items-center gap-1"><UserCheck size={12}/> {status}</span>}
-                </div>
-                <h3 className="text-xl font-bold mt-4 text-white">{title}</h3>
-                <p className="text-gray-400 text-sm mt-1">{description}</p>
+        <div className="relative flex items-center justify-center w-40 h-40 mx-auto">
+            <svg className="absolute inset-0 w-full h-full transform -rotate-90">
+                <circle cx="80" cy="80" r={radius} className="stroke-white/10" strokeWidth="8" fill="none" />
+                <motion.circle
+                    cx="80"
+                    cy="80"
+                    r={radius}
+                    stroke="url(#score-gradient)"
+                    strokeWidth="8"
+                    fill="none"
+                    strokeLinecap="round"
+                    initial={{ strokeDashoffset: circumference }}
+                    animate={{ strokeDashoffset }}
+                    transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+                    style={{ strokeDasharray: circumference }}
+                />
+                <defs>
+                    <linearGradient id="score-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#A855F7" />
+                        <stop offset="100%" stopColor="#22D3EE" />
+                    </linearGradient>
+                </defs>
+            </svg>
+            <div className="text-center relative z-10">
+                <motion.span 
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, delay: 0.5 }}
+                    className="text-4xl font-black bg-gradient-to-br from-purple-400 to-cyan-400 bg-clip-text text-transparent"
+                >
+                    {score}%
+                </motion.span>
             </div>
-            <Button variant="link" className="text-fuchsia-400 p-0 mt-4 justify-start hover:text-fuchsia-300">
-                {ctaText} <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-        </motion.div>
+            {/* Glowing effect behind ring */}
+            <div className="absolute inset-0 bg-purple-500/10 blur-2xl rounded-full pb-0" />
+        </div>
     );
 };
 
-const ScoreHistoryChart = ({ history, loading }) => {
-    const { t } = useTranslation('dashboard');
+const StatBadge = ({ icon: Icon, label, value, delay }) => (
+    <motion.div 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay }}
+        className="flex flex-col items-center justify-center p-4 rounded-2xl border bg-white/5 backdrop-blur-sm relative overflow-hidden group"
+        style={{ borderColor: 'rgba(255,255,255,0.05)' }}
+    >
+        <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+        <Icon className="w-6 h-6 text-cyan-400 mb-2 opacity-80" />
+        <span className="text-[11px] uppercase tracking-widest text-slate-400 mb-1">{label}</span>
+        <span className="text-lg font-bold text-white text-center leading-tight">{value}</span>
+    </motion.div>
+);
 
-    if (loading) return <div className="text-center text-slate-400 py-10">{t('loading', { ns: 'common' })}</div>;
-    
-    if (!history || history.length === 0) {
-        return <div className="text-center text-slate-400 py-10">{t('score_history.no_data')}</div>;
-    }
 
-    const chartData = history.map(item => ({
-        date: new Date(item.created_at).toLocaleDateString(),
-        score: item.score
-    })).reverse();
 
-    return (
-        <Card className="bg-slate-800/50 border-fuchsia-500/30 backdrop-blur-sm">
-            <CardHeader>
-                <CardTitle>{t('score_history.title')}</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <ResponsiveContainer width="100%" height={200}>
-                    <LineChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(217, 70, 239, 0.1)" />
-                        <XAxis dataKey="date" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
-                        <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
-                        <RechartsTooltip 
-                          contentStyle={{ 
-                            backgroundColor: 'rgba(30, 41, 59, 0.9)', 
-                            borderColor: 'rgba(217, 70, 239, 0.5)',
-                            borderRadius: '0.75rem'
-                          }}
-                          labelStyle={{ color: '#f8fafc' }}
-                        />
-                        <Legend wrapperStyle={{ fontSize: '14px' }} />
-                        <Line name={t('score_history.legend_score')} type="monotone" dataKey="score" stroke="#d946ef" strokeWidth={2} dot={{ r: 4, fill: '#d946ef' }} activeDot={{ r: 8, stroke: '#d946ef', strokeWidth: 2, fill: '#1e293b' }} />
-                    </LineChart>
-                </ResponsiveContainer>
-            </CardContent>
-        </Card>
-    );
-};
-
-const ScoreBreakdownCard = ({ analysis, profile }) => {
-    const { t } = useTranslation('dashboard');
-    const loading = !analysis; // Simple loading state
-
-    const scoreDetails = analysis?.score_details || {};
-    const recommendedCountry = analysis?.pais_sugerido || profile.target_country || "Canada";
-    const alternateCountries = analysis?.paises_alternativos || ["Australia", "New Zealand"];
-    const keyRecommendation = analysis?.recomendacion_clave || t('score_breakdown.key_recommendation_value');
-
-    return (
-        <Card className="bg-slate-800/50 border-fuchsia-500/30 backdrop-blur-sm lg:col-span-2">
-            <CardHeader>
-                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-fuchsia-400 to-pink-400 bg-clip-text text-transparent">
-                    {t('score_breakdown.title')}
-                </CardTitle>
-                 <CardDescription>{t('score_breakdown.subtitle')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-                {loading ? (
-                    <div className="text-center p-8">{t('loading', { ns: 'common' })}</div>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <h4 className="font-semibold text-lg mb-3 text-slate-200">{t('score_breakdown.breakdown_title')}</h4>
-                            <ul className="space-y-2 text-sm">
-                                {Object.entries(scoreDetails).map(([key, value]) => (
-                                    <li key={key} className="flex justify-between items-center bg-slate-700/50 p-2 rounded-md">
-                                        <span className="capitalize text-slate-300">{t(`score_breakdown.categories.${key}`, key)}</span>
-                                        <span className="font-bold text-fuchsia-300">{value}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                        <div className="space-y-4">
-                            <div>
-                                <h4 className="font-semibold text-slate-200">{t('score_breakdown.recommended_country_label')}</h4>
-                                <p className="text-green-400 font-bold text-lg">{recommendedCountry}</p>
-                            </div>
-                            <div>
-                                <h4 className="font-semibold text-slate-200">{t('score_breakdown.alternate_countries_label')}</h4>
-                                <p className="text-slate-300">{alternateCountries.join(', ')}</p>
-                            </div>
-                            <div>
-                                <h4 className="font-semibold text-slate-200">{t('score_breakdown.key_recommendation_label')}</h4>
-                                <p className="text-slate-300">{keyRecommendation}</p>
-                            </div>
-                             <div className="pt-4 space-y-2">
-                                <Button variant="outline" className="w-full border-fuchsia-500/50 text-fuchsia-300 hover:bg-fuchsia-500/10">
-                                    {t('score_breakdown.download_report_cta')}
-                                </Button>
-                                <Button variant="ghost" className="w-full text-slate-400 hover:bg-slate-700/50">
-                                    {t('score_breakdown.contact_expert_cta')}
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </CardContent>
-        </Card>
-    );
-}
-
-const ProDashboard = ({ profile: initialProfile, analysis: initialAnalysis, onAction }) => {
+const ProDashboard = ({ profile: initialProfile, analysis: initialAnalysis }) => {
     const { t } = useTranslation(['dashboard', 'life_planner', 'pro_modules']);
     const navigate = useNavigate();
-    const { profile, analysis, scoreHistory, loading } = useSupabaseDashboard(initialProfile);
-    
-    const getScoreColor = (score) => {
-        if (score < 40) return "text-yellow-400";
-        if (score < 70) return "text-blue-400";
-        return "text-green-400";
-    };
+    const { profile, analysis } = useSupabaseDashboard(initialProfile);
 
-    const getRiskLevel = (score) => {
-        if (score < 40) return t('free_score_risk_low');
-        if (score < 70) return t('free_score_risk_medium');
-        return t('free_score_risk_high');
-    };
+    const percentage = profile?.migratory_score || 0;
+    const recommendedCountry = analysis?.pais_sugerido || profile?.target_country || "Canadá";
+    const potential = percentage > 60 ? 'Sólido' : 'En progreso';
 
-    const handleNavigation = (path) => {
-        navigate(path);
-    };
-    
     return (
-        <div className="flex-1 p-4 sm:p-8 overflow-y-auto relative">
-            <GridPattern color="rgba(217, 70, 239, 0.08)" />
-            <KaiAssistantBubble 
-                message={t('kai_assistant.pro_greeting')}
-                userType="pro"
-            />
-            <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-fuchsia-600 to-pink-600 text-white text-center py-2 text-sm font-bold shadow-lg shadow-fuchsia-500/20">
-                {t('dashboard_pro.badge_plan_active')}
-            </div>
+        <main className="flex-1 w-full h-[calc(100vh-80px)] relative overflow-hidden bg-slate-950 text-white selection:bg-cyan-500/30 flex">
             
-            <motion.div 
-                className="mt-12 space-y-8"
-                initial="hidden"
-                animate="visible"
-                variants={{
-                    visible: {
-                        opacity: 1,
-                        transition: {
-                            when: "beforeChildren",
-                            staggerChildren: 0.1,
-                        },
-                    },
-                    hidden: { opacity: 0 },
-                }}
-            >
-                <header className="text-center">
-                    <h1 className="text-4xl font-bold bg-gradient-to-r from-fuchsia-400 to-pink-400 bg-clip-text text-transparent">
-                        {t('essential_welcome_title', { name: profile.full_name || 'Usuario' })}
-                    </h1>
-                    <p className="text-gray-400 text-lg mt-2">{t('dashboard_pro.welcome_subtitle')}</p>
-                </header>
+            {/* Background elements */}
+            <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+                <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-cyan-600/10 rounded-full blur-[150px]" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px]" />
+                <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] mix-blend-overlay" />
+            </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                     <motion.div 
-                        className="lg:col-span-1 flex flex-col gap-8"
-                        variants={{ visible: { opacity: 1, y: 0 }, hidden: { opacity: 0, y: 20 } }}
+            <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-cyan-600 to-purple-600 text-white text-center py-1.5 text-[10px] uppercase tracking-[0.2em] font-bold z-50">
+                {t('dashboard_pro.badge_plan_active', '🚀 AI Agent & PRO Modules Active')}
+            </div>
+
+            <div className="w-full flex lg:flex-row flex-col-reverse h-full max-w-7xl mx-auto z-10 pt-8 pb-4 px-4 sm:px-6 lg:px-8 gap-6 md:gap-8">
+                
+                {/* Left Pane: AI Agent Chat */}
+                <div className="w-full lg:w-7/12 h-[600px] lg:h-full flex flex-col pt-4">
+                    <h2 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-4 flex items-center gap-2">
+                        <Sparkles className="w-5 h-5 text-cyan-400" />
+                        Tu Agente KAI
+                    </h2>
+                    <div className="flex-1 min-h-0">
+                        <ProChat />
+                    </div>
+                </div>
+
+                {/* Right Pane: HUD & Modules */}
+                <div className="w-full lg:w-5/12 lg:h-full flex flex-col gap-6 pt-4 lg:overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+                    
+                    {/* Header summary */}
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight text-white mb-1">
+                            Hola, {profile?.full_name?.split(' ')[0] || 'Pro'}
+                        </h1>
+                        <p className="text-slate-400 text-sm">Tu progreso se sincroniza con el agente en tiempo real.</p>
+                    </div>
+
+                    {/* Score HUD */}
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.6, type: "spring" }}
+                        className="rounded-[2rem] border p-6 relative overflow-hidden backdrop-blur-md bg-slate-900/40 shadow-2xl shrink-0"
+                        style={{ borderColor: 'rgba(255,255,255,0.05)' }}
                     >
-                        <Card className="bg-slate-800/50 border-fuchsia-500/30 backdrop-blur-sm text-center">
-                            <CardHeader>
-                                <CardTitle>{t('free_score_title')}</CardTitle>
-                                <CardDescription>{t('dashboard_pro.score_description')}</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div className={`text-8xl font-bold ${getScoreColor(profile.migratory_score)}`}>
-                                    {profile.migratory_score}
+                        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
+                        
+                        <div className="flex flex-col sm:flex-row items-center gap-6 relative z-10">
+                            <div className="flex-shrink-0">
+                                <PremiumScoreRing score={percentage} />
+                                <div className="text-center mt-3 text-[10px] text-slate-400 uppercase tracking-widest font-semibold flex items-center justify-center gap-1.5">
+                                    <Target className="w-3.5 h-3.5 text-cyan-400" />
+                                    Match Global
                                 </div>
-                                <div className="font-semibold text-lg">{getRiskLevel(profile.migratory_score)}</div>
-                                 <Progress value={profile.migratory_score} className="mt-4 h-2 [&>div]:bg-gradient-to-r from-fuchsia-500 to-pink-500" />
-                            </CardContent>
-                        </Card>
-                        <ScoreHistoryChart history={scoreHistory} loading={loading} />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3 flex-grow w-full">
+                                <StatBadge icon={Compass} label="Destino Ideal" value={recommendedCountry} delay={0.2} />
+                                <StatBadge icon={TrendingUp} label="Oportunidad" value={potential} delay={0.3} />
+                            </div>
+                        </div>
                     </motion.div>
 
-                    <ScoreBreakdownCard profile={profile} analysis={analysis} />
-                </div>
+                    {/* Próximos Pasos Recomendados */}
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.4 }}
+                        className="bg-purple-900/10 border border-purple-500/20 rounded-2xl p-5 relative overflow-hidden"
+                    >
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl" />
+                        <h3 className="text-sm font-semibold text-purple-300 mb-2 flex items-center gap-2">
+                            <Sparkles className="w-4 h-4" />
+                            Sugerencia de KAI
+                        </h3>
+                        <p className="text-slate-300 text-sm leading-relaxed mb-4">
+                            Sube tu CV actualizado en el chat para que evalúe tus competencias frente a los requisitos del Express Entry.
+                        </p>
+                        <Button 
+                            onClick={() => {
+                                const input = document.querySelector('input[type="text"]');
+                                if(input) {
+                                  input.focus();
+                                  input.value = "Por favor evalúa mi perfil profesional";
+                                  // Trigger react change event
+                                  const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+                                  nativeInputValueSetter.call(input, "Por favor evalúa mi perfil profesional");
+                                  const event = new Event('input', { bubbles: true});
+                                  input.dispatchEvent(event);
+                                }
+                            }}
+                            className="w-full bg-white/5 hover:bg-white/10 text-white border border-white/10"
+                        >
+                            <BrainCircuit className="w-4 h-4 mr-2" />
+                            Iniciar Evaluación
+                        </Button>
+                    </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                     <FeatureCard
-                        icon={Compass}
-                        title={t('dashboard_essential.title')}
-                        description={t('dashboard_pro.path_unlocked')}
-                        ctaText={t('dashboard_pro.path_cta')}
-                        onAction={() => navigate('/my-migration-route')}
-                        delay={0.1}
-                        status={t('dashboard_pro.status_active')}
-                        tooltipContent={t('dashboard_pro.tooltip_path')}
-                    />
-                    <FeatureCard
-                        icon={Briefcase}
-                        title={t('life_planner:title')}
-                        description={t('life_planner:description')}
-                        ctaText={t('life_planner:cta')}
-                        onAction={() => navigate('/pro/life-planner')}
-                        delay={0.2}
-                        status={t('dashboard_pro.status_active')}
-                        tooltipContent={t('life_planner:tooltip')}
-                    />
-                    <FeatureCard
-                        icon={FileText}
-                        title={t('pro_modules:docs_verification.title')}
-                        description={t('pro_modules:docs_verification.desc')}
-                        ctaText={t('pro_modules:docs_verification.cta')}
-                        onAction={() => navigate('/pro/document-verification')}
-                        delay={0.3}
-                        status={t('pro_modules:docs_verification.status')}
-                        tooltipContent={t('dashboard_pro.tooltip_docs')}
-                    />
-                    <FeatureCard
-                        icon={BrainCircuit}
-                        title={t('pro_modules:ai_alerts.title')}
-                        description={t('pro_modules:ai_alerts.desc')}
-                        ctaText={t('pro_modules:ai_alerts.cta')}
-                        onAction={() => navigate('/alerts')}
-                        delay={0.4}
-                        status={t('pro_modules:ai_alerts.status')}
-                        tooltipContent={t('dashboard_pro.tooltip_ai')}
-                    />
-                     <FeatureCard
-                        icon={ShieldCheck}
-                        title={t('pro_modules:priority_support.title')}
-                        description={t('pro_modules:priority_support.desc')}
-                        ctaText={t('pro_modules:priority_support.cta')}
-                        onAction={() => navigate('/support')}
-                        delay={0.5}
-                        status={t('dashboard_pro.status_active')}
-                        tooltipContent={t('dashboard_pro.tooltip_support')}
-                    />
-                     <FeatureCard
-                        icon={Award}
-                        title={t('pro_modules:exclusive_benefits.title')}
-                        description={t('pro_modules:exclusive_benefits.desc')}
-                        ctaText={t('pro_modules:exclusive_benefits.cta')}
-                        onAction={() => navigate('/benefits')}
-                        delay={0.6}
-                        status={t('dashboard_pro.status_active')}
-                        tooltipContent={t('dashboard_pro.tooltip_benefits')}
-                    />
                 </div>
-                
-                <motion.div 
-                    className="text-center bg-gradient-to-r from-fuchsia-600/10 to-pink-600/10 p-8 rounded-2xl border border-fuchsia-500/30 hover-glow"
-                    variants={{ visible: { opacity: 1, y: 0 }, hidden: { opacity: 0, y: 20 } }}
-                >
-                    <h3 className="text-2xl font-bold mb-2 text-white">
-                        <Sparkles className="w-6 h-6 inline-block mr-2 text-fuchsia-400" />
-                        {t('cta_pro_footer.title')}
-                    </h3>
-                    <p className="text-slate-400 mb-6 max-w-xl mx-auto">{t('cta_pro_footer.subtitle')}</p>
-                    <Button onClick={() => navigate('/my-migration-route')} size="lg" className="bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-bold shadow-lg shadow-fuchsia-500/20">
-                        {t('cta_pro_footer.button')}
-                    </Button>
-                </motion.div>
-            </motion.div>
-            <RouteSelectorWidget />
-        </div>
+            </div>
+        </main>
     );
 };
 
