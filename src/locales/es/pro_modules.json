@@ -1,0 +1,26 @@
+{
+  "docs_verification": {
+    "title": "Verifica tus documentos clave",
+    "desc": "Nuestra IA analiza tus documentos para asegurar que cumplan con los requisitos.",
+    "cta": "Abrir Verificador",
+    "status": "Listo para usar"
+  },
+  "ai_alerts": {
+    "title": "Alertas IA de Cambios Legales",
+    "desc": "Recibe notificaciones en tiempo real sobre cambios en leyes que te afectan.",
+    "cta": "Ver Mis Alertas",
+    "status": "Monitoreando"
+  },
+  "priority_support": {
+    "title": "Soporte Prioritario con Expertos",
+    "desc": "Accede a nuestro equipo de soporte para resolver tus dudas rápidamente.",
+    "cta": "Contactar a Soporte",
+    "status": "Disponible 24/7"
+  },
+  "exclusive_benefits": {
+    "title": "Beneficios Exclusivos para Miembros",
+    "desc": "Descuentos y ofertas especiales de nuestra red de socios verificados.",
+    "cta": "Explorar Beneficios",
+    "status": "Nuevas ofertas"
+  }
+}

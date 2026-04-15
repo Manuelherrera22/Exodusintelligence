@@ -1,0 +1,62 @@
+{
+  "page_title": "My Intelligent Migration Route",
+  "page_description": "Your personalized, step-by-step migration plan, powered by AI.",
+  "back_to_dashboard": "Back to Dashboard",
+  "header": {
+    "title": "Your Intelligent Migration Route",
+    "subtitle": "A dynamic plan that adapts to your profile and global changes.",
+    "recommended_visa": "Recommended Visa",
+    "estimated_timeline": "Estimated Timeline"
+  },
+  "smart_alerts": {
+    "title": "Smart Alerts",
+    "subtitle": "Real-time updates on your route.",
+    "no_alerts": "No new alerts at the moment. Everything is on track!"
+  },
+  "alternative_routes": {
+    "title": "Alternative Routes",
+    "subtitle": "Other viable options for you.",
+    "no_alternatives": "No alternative routes available at this time."
+  },
+  "status": {
+    "completed": "Completed",
+    "active": "Active",
+    "locked": "Locked"
+  },
+  "button": {
+    "mark_complete": "Mark as complete",
+    "upload_docs": "Upload Documents"
+  },
+  "details_title": "Details:",
+  "attachments_title": "Attachments:",
+  "smart_tip_title": "Smart Tip",
+  "loading_state": {
+    "title": "Building Your Route...",
+    "subtitle": "We are personalizing your migration plan. This will only take a moment."
+  },
+  "error_state": {
+    "title": "Oops! Something Went Wrong",
+    "subtitle": "We couldn't load your migration route. Please try again later or contact support if the problem persists."
+  },
+  "toast": {
+    "step_completed_title": "Step Completed!",
+    "step_completed_desc": "Great! The next step has been unlocked.",
+    "error_title": "An Error Occurred",
+    "error_desc": "Could not complete the action. Please try again."
+  },
+  "upload_dialog": {
+    "title": "Upload Documents for",
+    "description": "Attach the necessary files for this step. You can add multiple files.",
+    "button_add": "Add Files",
+    "button_upload": "Upload",
+    "button_cancel": "Cancel",
+    "formats_accepted": "PDF, JPG, PNG up to 5MB.",
+    "upload_success": "Files uploaded successfully!",
+    "upload_error": "There was an error uploading the files."
+  },
+  "no_route_assigned": {
+    "title": "Your Journey Awaits!",
+    "description": "You haven't selected a migration route yet. Explore your options to build your personalized step-by-step plan.",
+    "cta_select": "Select Your Route"
+  }
+}

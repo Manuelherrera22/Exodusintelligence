@@ -1,0 +1,5 @@
+{
+  "onboarding_welcome_message": "¡Hola, {{nombre}}! Tu camino migratorio comienza aquí.",
+  "onboarding_welcome_submessage": "Tu puntaje migratorio actual es {{puntaje}}. Estás usando el plan {{plan}}.",
+  "onboarding_welcome_cta": "Explorar tus oportunidades"
+}

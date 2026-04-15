@@ -1,0 +1,21 @@
+{
+  "page_title": "Migration History - Exodus",
+  "form_title": "Generate Migration Index",
+  "form_subtitle": "Enter 3 details to calculate your international viability instantly.",
+  "country_label": "Nationality / Country of Origin",
+  "country_placeholder": "E.g., Colombia, Mexico...",
+  "age_label": "Current Age",
+  "age_placeholder": "Your age",
+  "education_label": "Highest Education Level",
+  "education_placeholder": "Select your level...",
+  "status_loading": "Analyzing viability...",
+  "cta_submit": "Generate My Migration Index",
+  "save_success_desc": "Algorithm initialized! Building your route...",
+  "error_title": "Calculation Error",
+  "error_desc": "We couldn't process your data. Please try again.",
+  "zod": {
+    "country_min": "Please enter a valid country.",
+    "age_invalid": "Please enter a realistic age (18-99).",
+    "education_required": "Please select your education level."
+  }
+}

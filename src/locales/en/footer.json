@@ -1,0 +1,19 @@
+{
+  "subtitle": "Your journey, powered by AI.",
+  "nav_legal": "Legal",
+  "nav_privacy": "Privacy Policy",
+  "nav_terms": "Terms of Service",
+  "nav_cookies": "Cookie Policy",
+  "nav_ai": "AI Transparency",
+  "nav_support": "Support",
+  "nav_contact": "Contact",
+  "nav_about": "About Us",
+  "nav_blog": "Migration Blog",
+  "nav_social": "Social",
+  "nav_whatsapp": "WhatsApp",
+  "nav_instagram": "Instagram",
+  "nav_tiktok": "TikTok",
+  "copyright": "© {{year}} Exodus Intelligence. All rights reserved.",
+  "toast_wip_title": "🚧 Feature in development",
+  "toast_wip_desc": "This section will be available soon! Thanks for your patience."
+}

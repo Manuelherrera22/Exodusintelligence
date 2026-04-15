@@ -1,0 +1,59 @@
+{
+  "module_title": "My Migration Path™",
+  "description": "Find out your current score and discover how to advance towards your ideal destination. This is your intelligent migration profile, built by you, with help from Exodus.",
+  "progress_score": {
+    "title": "Your Migration Score™",
+    "level_low": "Low",
+    "level_moderate": "Moderate",
+    "level_high": "High",
+    "recommendation": "You are close to being eligible for Portugal. Complete a few key steps and you will unlock real routes."
+  },
+  "missing_requirements": {
+    "title": "What you're missing",
+    "alert": "Blocking Alert: You need a valid passport to apply to any country.",
+    "tooltip": "Why is your score low? This section shows the key requirements you are missing to improve your profile.",
+    "items": {
+      "item1": { "text": "Validate your valid passport", "points": "+5" },
+      "item2": { "text": "Certify your B1 English level", "points": "+8" },
+      "item3": { "text": "Register a remote work contract", "points": "+10" }
+    }
+  },
+  "suggested_actions": {
+    "title": "How to improve your profile?",
+    "motivational_phrase": "You are not eligible today, but you are 3 steps away from achieving it.",
+    "actions": {
+      "action1": "Upload your criminal records",
+      "action2": "Connect with an allied English course",
+      "action3": "Explore countries that accept remote workers"
+    },
+    "cta": "Connect"
+  },
+  "eligible_destinations": {
+    "title": "Possible current destinations",
+    "destinations": {
+      "dest1": { "country": "Portugal", "status": "Almost eligible", "tooltip": "You meet 80% of the requirements for the D7 visa." },
+      "dest2": { "country": "Colombia", "status": "Immediate residency by nationality", "tooltip": "Due to your nationality, you can apply directly." },
+      "dest3": { "country": "Spain", "status": "Partial pre-approval", "tooltip": "Fictitious pre-approval to generate excitement." }
+    },
+    "status_eligible": "Eligible",
+    "status_almost_eligible": "Almost eligible",
+    "status_not_eligible": "Not yet eligible"
+  },
+  "locked_features": {
+    "title": "Premium Features Locked",
+    "features": {
+      "feature1": "Automatic document verification",
+      "feature2": "AI-guided legal route",
+      "feature3": "Income and investment simulator",
+      "feature4": "Direct connection with allied law firms"
+    },
+    "cta_button": {
+      "text": "Unlock All",
+      "link": "/compare-plans"
+    }
+  },
+  "kai_assistant": {
+    "greeting": "{{name}}, you are very close to your European dream. Take one more step today!",
+    "pro_greeting": "Welcome to total control. I'm here to accelerate every step of your process."
+  }
+}

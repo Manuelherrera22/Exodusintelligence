@@ -1,0 +1,13 @@
+{
+  "title": "Descubre tu ruta migratoria ideal",
+  "subtitle": "Responde unas pocas preguntas y nuestra IA calculará tu potencial migratorio en tiempo real.",
+  "country_label": "Quiero ir a...",
+  "country_options": ["Canadá", "España", "EE.UU.", "Otro"],
+  "reason_label": "Mi motivo principal es...",
+  "reason_options": ["Trabajo", "Estudio", "Inversión", "Familia"],
+  "age_label": "Mi rango de edad es...",
+  "age_options": ["18-25", "26-35", "36-45", "45+"],
+  "result_text": "Tus primeras respuestas indican que puedes migrar legalmente. <1>Regístrate para ver tu ruta completa.</1>",
+  "result_cta": "Ver Mi Ruta Personalizada",
+  "register_button": "Regístrate"
+}

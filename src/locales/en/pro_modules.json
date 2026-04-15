@@ -1,0 +1,26 @@
+{
+  "docs_verification": {
+    "title": "Verify Your Key Documents",
+    "desc": "Our AI analyzes your documents to ensure they meet all requirements.",
+    "cta": "Open Verifier",
+    "status": "Ready to use"
+  },
+  "ai_alerts": {
+    "title": "AI Legal Change Alerts",
+    "desc": "Receive real-time notifications about law changes that affect you.",
+    "cta": "View My Alerts",
+    "status": "Monitoring"
+  },
+  "priority_support": {
+    "title": "Priority Expert Support",
+    "desc": "Access our support team to resolve your questions quickly.",
+    "cta": "Contact Support",
+    "status": "Available 24/7"
+  },
+  "exclusive_benefits": {
+    "title": "Exclusive Member Benefits",
+    "desc": "Special discounts and offers from our network of verified partners.",
+    "cta": "Explore Benefits",
+    "status": "New offers"
+  }
+}

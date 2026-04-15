@@ -1,0 +1,13 @@
+{
+  "title": "Discover your ideal migration path",
+  "subtitle": "Answer a few questions and our AI will calculate your migration potential in real time.",
+  "country_label": "I want to go to...",
+  "country_options": ["Canada", "Spain", "USA", "Other"],
+  "reason_label": "My main reason is...",
+  "reason_options": ["Work", "Study", "Invest", "Family"],
+  "age_label": "My age range is...",
+  "age_options": ["18-25", "26-35", "36-45", "45+"],
+  "result_text": "Your initial answers indicate you can legally migrate. <1>Register to see your full path.</1>",
+  "result_cta": "See My Personalized Route",
+  "register_button": "Register"
+}

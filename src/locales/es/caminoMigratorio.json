@@ -1,0 +1,58 @@
+{
+  "module_title": "Mi Camino Migratorio™",
+  "description": "Conoce tu puntaje actual y descubre cómo avanzar hacia tu destino ideal. Este es tu perfil migratorio inteligente, construido por ti, con ayuda de Exodus.",
+  "progress_score": {
+    "title": "Tu Puntaje Migratorio™",
+    "level_low": "Bajo",
+    "level_moderate": "Moderado",
+    "level_high": "Alto",
+    "recommendation": "Estás cerca de ser elegible para Portugal. Completa algunos pasos clave y desbloquearás rutas reales."
+  },
+  "missing_requirements": {
+    "title": "Qué te falta",
+    "alert": "Alerta de bloqueo: Necesitas un pasaporte vigente para aplicar a cualquier país.",
+    "tooltip": "¿Por qué tu puntaje es bajo? Esta sección te muestra los requisitos clave que te faltan para mejorar tu perfil.",
+    "items": {
+      "item1": { "text": "Validar tu pasaporte vigente", "points": "+5" },
+      "item2": { "text": "Certificar tu nivel de inglés B1", "points": "+8" },
+      "item3": { "text": "Registrar un contrato de trabajo remoto", "points": "+10" }
+    }
+  },
+  "suggested_actions": {
+    "title": "¿Cómo mejorar tu perfil?",
+    "motivational_phrase": "Hoy no eres elegible, pero estás a 3 pasos de lograrlo.",
+    "actions": {
+      "action1": "Sube tus antecedentes penales",
+      "action2": "Conecta con un curso de inglés aliado",
+      "action3": "Explora países que aceptan trabajadores remotos"
+    },
+    "cta": "Conectar"
+  },
+  "eligible_destinations": {
+    "title": "Posibles destinos actuales",
+    "destinations": {
+      "dest1": { "country": "Portugal", "status": "Casi elegible", "tooltip": "Cumples con el 80% de los requisitos para la visa D7." },
+      "dest2": { "country": "Colombia", "status": "Residencia inmediata por nacionalidad", "tooltip": "Por tu nacionalidad, puedes aplicar directamente." },
+      "dest3": { "country": "España", "status": "Pre-aprobación parcial", "tooltip": "Pre-aprobación ficticia para generar emoción." }
+    },
+    "status_eligible": "Elegible",
+    "status_almost_eligible": "Casi elegible",
+    "status_not_eligible": "No elegible aún"
+  },
+  "locked_features": {
+    "title": "Funciones Premium Bloqueadas",
+    "features": {
+      "feature1": "Verificación documental automática",
+      "feature2": "Ruta legal guiada por IA",
+      "feature3": "Simulador de renta e inversión",
+      "feature4": "Conexión directa con bufetes aliados"
+    },
+    "cta_button": {
+      "text": "Desbloquear todo"
+    }
+  },
+  "kai_assistant": {
+    "greeting": "{{name}}, estás muy cerca de tu sueño europeo. ¡Avanza un paso más hoy!",
+    "pro_greeting": "Bienvenido al control total. Estoy aquí para acelerar cada paso de tu proceso."
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "page_title": "Historial Migratorio - Exodus",
+  "form_title": "Generar Historial Migratorio",
+  "form_subtitle": "Ingresa 3 datos para calcular tu viabilidad internacional al instante.",
+  "country_label": "Nacionalidad / País de Origen",
+  "country_placeholder": "Ej: Colombia, México...",
+  "age_label": "Edad Actual",
+  "age_placeholder": "Indícanos tu edad",
+  "education_label": "Nivel Educativo Formal",
+  "education_placeholder": "Selecciona tu nivel...",
+  "status_loading": "Analizando viabilidad...",
+  "cta_submit": "Generar Mi Índice Migratorio",
+  "save_success_desc": "¡Algoritmo inicializado! Construyendo tu ruta...",
+  "error_title": "Error al calcular",
+  "error_desc": "No pudimos procesar tus datos. Inténtalo de nuevo.",
+  "zod": {
+    "country_min": "Ingresa un país válido.",
+    "age_invalid": "Ingresa una edad realista (18-99).",
+    "education_required": "Selecciona tu educación formal."
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "page_title": "Mi Ruta Migratoria Inteligente",
+  "page_description": "Tu plan migratorio personalizado y paso a paso, potenciado por IA.",
+  "back_to_dashboard": "Volver al Dashboard",
+  "header": {
+    "title": "Tu Ruta Migratoria Inteligente",
+    "subtitle": "Un plan dinámico que se adapta a tu perfil y a los cambios globales.",
+    "recommended_visa": "Visa Recomendada",
+    "estimated_timeline": "Plazo Estimado"
+  },
+  "smart_alerts": {
+    "title": "Alertas Inteligentes",
+    "subtitle": "Actualizaciones en tiempo real sobre tu ruta.",
+    "no_alerts": "Sin nuevas alertas por el momento. ¡Todo va sobre ruedas!"
+  },
+  "alternative_routes": {
+    "title": "Rutas Alternativas",
+    "subtitle": "Otras opciones viables para ti.",
+    "no_alternatives": "No hay rutas alternativas disponibles en este momento."
+  },
+  "status": {
+    "completed": "Completado",
+    "active": "Activo",
+    "locked": "Bloqueado"
+  },
+  "button": {
+    "mark_complete": "Marcar como completado",
+    "upload_docs": "Subir Documentos"
+  },
+  "details_title": "Detalles:",
+  "attachments_title": "Adjuntos:",
+  "smart_tip_title": "Consejo Inteligente",
+  "loading_state": {
+    "title": "Construyendo Tu Ruta...",
+    "subtitle": "Estamos personalizando tu plan migratorio. Esto solo tomará un momento."
+  },
+  "error_state": {
+    "title": "¡Uy! Algo Salió Mal",
+    "subtitle": "No pudimos cargar tu ruta migratoria. Por favor, inténtalo más tarde o contacta a soporte si el problema persiste."
+  },
+  "toast": {
+    "step_completed_title": "¡Paso Completado!",
+    "step_completed_desc": "¡Genial! El siguiente paso ha sido desbloqueado.",
+    "error_title": "Ocurrió un Error",
+    "error_desc": "No se pudo completar la acción. Inténtalo de nuevo."
+  },
+  "upload_dialog": {
+    "title": "Subir Documentos para",
+    "description": "Adjunta los archivos necesarios para este paso. Puedes añadir múltiples archivos.",
+    "button_add": "Añadir Archivos",
+    "button_upload": "Subir",
+    "button_cancel": "Cancelar",
+    "formats_accepted": "PDF, JPG, PNG de hasta 5MB.",
+    "upload_success": "¡Archivos subidos con éxito!",
+    "upload_error": "Hubo un error al subir los archivos."
+  },
+  "no_route_assigned": {
+    "title": "¡Tu Viaje Te Espera!",
+    "description": "Aún no has seleccionado una ruta migratoria. Explora tus opciones para construir tu plan personalizado paso a paso.",
+    "cta_select": "Selecciona Tu Ruta"
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "onboarding_welcome_message": "Hello, {{nombre}}! Your migration journey starts here.",
+  "onboarding_welcome_submessage": "Your current migration score is {{puntaje}}. You are using the {{plan}} plan.",
+  "onboarding_welcome_cta": "Explore your opportunities"
+}

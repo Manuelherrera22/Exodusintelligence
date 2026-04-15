@@ -1,0 +1,19 @@
+{
+  "subtitle": "Tu viaje, impulsado por IA.",
+  "nav_legal": "Legal",
+  "nav_privacy": "Política de privacidad",
+  "nav_terms": "Términos de servicio",
+  "nav_cookies": "Política de Cookies",
+  "nav_ai": "Transparencia IA",
+  "nav_support": "Soporte",
+  "nav_contact": "Contacto",
+  "nav_about": "Quiénes somos",
+  "nav_blog": "Blog de migración",
+  "nav_social": "Social",
+  "nav_whatsapp": "WhatsApp",
+  "nav_instagram": "Instagram",
+  "nav_tiktok": "TikTok",
+  "copyright": "© {{year}} Exodus Intelligence. Todos los derechos reservados.",
+  "toast_wip_title": "🚧 Función en desarrollo",
+  "toast_wip_desc": "¡Esta sección estará disponible pronto! Gracias por tu paciencia."
+}
