@@ -130,27 +130,59 @@ const PricingModal = ({ isOpen, onClose, highlightPlan = 'pro' }) => {
     }
 
     setLoadingPlan(planId);
-    // Fake payment success
-    setTimeout(async () => {
-      const { error } = await supabase.from('profiles').update({ plan: 'pro' }).eq('user_id', user.id);
-      localStorage.setItem(`fallback_plan_${user.id}`, 'pro');
-      setLoadingPlan(null);
-      if (error) {
-        toast({ variant: 'destructive', title: 'Error', description: error.message });
-      } else {
-        toast({
-          title: isEn ? 'Welcome to PRO! 🚀' : '¡Bienvenido a PRO! 🚀',
-          description: isEn ? 'Your account has been upgraded successfully.' : 'Tu cuenta ha sido mejorada exitosamente.',
+    setLoadingPlan(planId);
+    
+    try {
+        const response = await fetch('/.netlify/functions/create-checkout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userId: user.id,
+                planId: planId,
+                billing: billing // 'monthly' or 'yearly'
+            }),
         });
-        onClose();
-        // Reload dashboard to apply Pro UI
-        if (window.location.pathname.includes('dashboard')) {
-          window.location.reload();
+
+        const data = await response.json();
+
+        if (response.ok && data.url) {
+            // Redirect physically to Stripe
+            window.location.href = data.url;
         } else {
-          navigate('/dashboard');
+            // Si no hay Stripe configurado AÚN, aplicamos bypass para pruebas
+            console.warn("Stripe Checkout not configured, using test bypass:", data);
+            
+            const { error } = await supabase.from('profiles').update({ plan: planId }).eq('user_id', user.id);
+            localStorage.setItem(`fallback_plan_${user.id}`, planId);
+            setLoadingPlan(null);
+            if (error) {
+                toast({ variant: 'destructive', title: 'Error', description: error.message });
+            } else {
+                toast({
+                  title: isEn ? 'TEST MODE: Welcome to PRO!' : 'MODO PRUEBA: ¡Bienvenido a PRO!',
+                  description: isEn ? 'Stripe not detected, bypass activated for testing.' : 'Stripe no configurado, activando acceso de prueba.',
+                });
+                onClose();
+                if (window.location.pathname.includes('dashboard')) {
+                  window.location.reload();
+                } else {
+                  navigate('/dashboard');
+                }
+            }
         }
-      }
-    }, 1500);
+    } catch (e) {
+        console.warn("Fetch Error (Offline/No Stripe), applying test bypass:", e);
+        const { error } = await supabase.from('profiles').update({ plan: planId }).eq('user_id', user.id);
+        localStorage.setItem(`fallback_plan_${user.id}`, planId);
+        setLoadingPlan(null);
+        if (!error) {
+             onClose();
+             window.location.href = '/dashboard';
+        }
+    }
+
   };
 
   if (!isOpen) return null;
