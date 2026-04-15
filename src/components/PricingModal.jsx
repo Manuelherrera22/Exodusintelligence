@@ -1,7 +1,11 @@
 import React, { useState, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check, Zap, Crown, Sparkles, ArrowRight, Shield, RefreshCw, Lock } from 'lucide-react';
+import { X, Check, Zap, Crown, Sparkles, ArrowRight, Shield, RefreshCw, Lock, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/SupabaseAuthContext';
+import { supabase } from '@/lib/customSupabaseClient';
+import { useToast } from '@/components/ui/use-toast';
 
 const plans = (isEn) => [
   {
@@ -108,7 +112,46 @@ const PricingModal = ({ isOpen, onClose, highlightPlan = 'pro' }) => {
   const { i18n } = useTranslation();
   const isEn = i18n.language?.startsWith('en');
   const [billing, setBilling] = useState('monthly');
+  const [loadingPlan, setLoadingPlan] = useState(null);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const allPlans = plans(isEn);
+
+  const handleUpgrade = async (planId) => {
+    if (!user) {
+      toast({
+        title: isEn ? 'Account Required' : 'Cuenta Requerida',
+        description: isEn ? 'Please create an account to start your trial' : 'Crea una cuenta para iniciar tu prueba',
+      });
+      localStorage.setItem('pending_checkout', 'pro');
+      navigate('/register');
+      return;
+    }
+
+    setLoadingPlan(planId);
+    // Fake payment success
+    setTimeout(async () => {
+      const { error } = await supabase.from('profiles').update({ plan: 'pro' }).eq('user_id', user.id);
+      localStorage.setItem(`fallback_plan_${user.id}`, 'pro');
+      setLoadingPlan(null);
+      if (error) {
+        toast({ variant: 'destructive', title: 'Error', description: error.message });
+      } else {
+        toast({
+          title: isEn ? 'Welcome to PRO! 🚀' : '¡Bienvenido a PRO! 🚀',
+          description: isEn ? 'Your account has been upgraded successfully.' : 'Tu cuenta ha sido mejorada exitosamente.',
+        });
+        onClose();
+        // Reload dashboard to apply Pro UI
+        if (window.location.pathname.includes('dashboard')) {
+          window.location.reload();
+        } else {
+          navigate('/dashboard');
+        }
+      }
+    }, 1500);
+  };
 
   if (!isOpen) return null;
 
@@ -217,7 +260,8 @@ const PricingModal = ({ isOpen, onClose, highlightPlan = 'pro' }) => {
                   </div>
 
                   <button
-                    disabled={plan.disabled}
+                    disabled={plan.disabled || loadingPlan}
+                    onClick={() => handleUpgrade(plan.id)}
                     className={`w-full py-3 rounded-xl text-sm font-semibold transition-all duration-200 mb-4 flex items-center justify-center gap-2 ${
                       isHighlighted
                         ? 'bg-gradient-to-r from-purple-600 to-cyan-600 text-white hover:shadow-[0_0_25px_rgba(139,92,246,0.3)] active:scale-[0.98]'
@@ -226,8 +270,8 @@ const PricingModal = ({ isOpen, onClose, highlightPlan = 'pro' }) => {
                           : 'bg-white/[0.06] text-white/70 hover:bg-white/[0.1] active:scale-[0.98]'
                     }`}
                   >
-                    {plan.cta}
-                    {!plan.disabled && <ArrowRight className="w-3.5 h-3.5" />}
+                    {loadingPlan === plan.id ? <Loader2 className="w-4 h-4 animate-spin" /> : plan.cta}
+                    {!plan.disabled && loadingPlan !== plan.id && <ArrowRight className="w-3.5 h-3.5" />}
                   </button>
 
                   <div className="space-y-2">

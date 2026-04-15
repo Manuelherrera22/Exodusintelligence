@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Bot, User, Mic, MicOff, Paperclip, X, FileText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { chatWithKAI } from '@/lib/kaiAgent';
+import { getKaiMemory, saveKaiMemory } from '@/lib/kaiMemoryStore';
 
 function renderText(text) {
   if (!text) return null;
@@ -131,7 +132,9 @@ function useVoiceInput(lang) {
   return { isListening, transcript, toggle, stop };
 }
 
-const ProChat = () => {
+import { supabase } from '@/lib/customSupabaseClient';
+
+const ProChat = ({ onProfileUpdate, initialProfile }) => {
   const { t, i18n } = useTranslation('dashboard');
   const [messages, setMessages] = useState([]);
   const [inputVal, setInputVal] = useState('');
@@ -151,7 +154,7 @@ const ProChat = () => {
     if (voice.transcript) setInputVal(voice.transcript);
   }, [voice.transcript]);
 
-  // Initial greeting
+  // Initial greeting or memory load
   const initialized = useRef(false);
   useEffect(() => {
     if (initialized.current) return;
@@ -160,14 +163,26 @@ const ProChat = () => {
     const init = async () => {
         setIsTyping(true);
         try {
-            const isEn = i18n.language.startsWith('en');
-            // Give KAI some context that this is the Pro Dashboard
-            const sysMsg = { role: 'system', content: isEn ? "User is on the Pro Dashboard. Introduce yourself briefly." : "El usuario está en el Dashboard Pro. Preséntate brevemente para ayudarlo con su perfil o tareas." };
-            const res = await chatWithKAI([sysMsg], null, i18n.language);
-            const msg = res.choices[0].message;
-            setMessages([{ role: 'assistant', content: msg.content }]);
+            // First try to load memory
+            const memoryMsgs = await getKaiMemory();
+            
+            if (memoryMsgs && memoryMsgs.length > 0) {
+              setMessages(memoryMsgs);
+            } else {
+              // No memory, generate initial context greeting
+              const isEn = i18n.language.startsWith('en');
+              const sysMsg = { role: 'system', content: isEn ? "User is on the Pro Dashboard. Introduce yourself briefly." : "El usuario está en el Dashboard Pro. Preséntate brevemente para ayudarlo con su perfil o tareas." };
+              const res = await chatWithKAI([sysMsg], null, i18n.language);
+              const msg = res.choices[0].message;
+              const newMsgs = [{ role: 'assistant', content: msg.content }];
+              setMessages(newMsgs);
+              await saveKaiMemory(newMsgs);
+            }
         } catch (e) {
-            setMessages([{ role: 'assistant', content: 'Hola, soy KAI. Tu agente inteligente. Estoy aquí para procesar tus documentos y planificar tu ruta migratoria. ¿En qué te puedo ayudar hoy?' }]);
+            console.error('Failed to init KAI', e);
+            const fallbackMsg = [{ role: 'assistant', content: 'Hola, soy KAI. Tu agente inteligente. Estoy aquí para procesar tus documentos y planificar tu ruta migratoria. ¿En qué te puedo ayudar hoy?' }];
+            setMessages(fallbackMsg);
+            await saveKaiMemory(fallbackMsg);
         }
         setIsTyping(false);
     }
@@ -212,10 +227,54 @@ const ProChat = () => {
     try {
       const response = await chatWithKAI(currentMsgs, currentAttachment?.base64, i18n.language);
       const resMsg = response.choices[0].message;
-      setMessages(prev => [...prev, resMsg]);
+      
+      let nextMsgs = [...currentMsgs, resMsg];
+      
+      // Process tool calls if KAI wants to update the profile
+      if (resMsg.tool_calls) {
+        let profileUpdates = {};
+        for (const tc of resMsg.tool_calls) {
+          if (tc.function.name === 'update_profile') {
+            const args = JSON.parse(tc.function.arguments || '{}');
+            profileUpdates = { ...profileUpdates, ...args };
+          }
+          nextMsgs = [...nextMsgs, {
+            role: 'tool', tool_call_id: tc.id,
+            name: tc.function.name,
+            content: JSON.stringify({ success: true, data: profileUpdates })
+          }];
+        }
+
+        // Only update if we actually got fields
+        if (Object.keys(profileUpdates).length > 0) {
+           console.log("KAI Live Profiling Update:", profileUpdates);
+           
+           // Calculate new migratory score if we imported the engine (or do it in Dashboard)
+           // Save to DB and notify parent immediately for the "Live" HUD effect
+           try {
+             const { data: { session } } = await supabase.auth.getSession();
+             if (session) {
+               // Update DB
+               await supabase
+                 .from('migration_profiles')
+                 .update(profileUpdates)
+                 .eq('user_id', session.user.id);
+             }
+             // Notify parent UI
+             if (onProfileUpdate) onProfileUpdate(profileUpdates);
+           } catch(e) { console.error('Failed to update live profile', e); }
+        }
+      }
+
+      setMessages(nextMsgs);
+      
+      // Save memory in background
+      saveKaiMemory(nextMsgs).catch(console.error);
+
     } catch (err) {
       console.warn('AI error', err);
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Lo siento, hubo un error de conexión con la red inteligente. Por favor intenta de nuevo en unos segundos.' }]);
+      const errorMsgs = [...currentMsgs, { role: 'assistant', content: 'Lo siento, hubo un error de conexión con la red inteligente. Por favor intenta de nuevo en unos segundos.' }];
+      setMessages(errorMsgs);
     }
     setIsTyping(false);
   };

@@ -6,6 +6,7 @@ import { Compass, FileText, BrainCircuit, ShieldCheck, Award, Sparkles, UserChec
 import { useNavigate } from 'react-router-dom';
 import { useSupabaseDashboard } from '@/hooks/useSupabaseDashboard.js';
 import ProChat from '@/components/pro/ProChat';
+import { calculateOverallScore, scoreDestinations } from '@/lib/migrationEngine';
 
 const PremiumScoreRing = ({ score }) => {
     const radius = 60;
@@ -72,14 +73,31 @@ const StatBadge = ({ icon: Icon, label, value, delay }) => (
 const ProDashboard = ({ profile: initialProfile, analysis: initialAnalysis }) => {
     const { t } = useTranslation(['dashboard', 'life_planner', 'pro_modules']);
     const navigate = useNavigate();
-    const { profile, analysis } = useSupabaseDashboard(initialProfile);
+    
+    // Supabase hook pulls initial stats
+    const { profile: dbProfile, analysis } = useSupabaseDashboard(initialProfile);
+    
+    // Local live state that overrides DB profile for instant visual feedback
+    const [liveProfileUpdates, setLiveProfileUpdates] = useState({});
+    
+    // Merged profile
+    const profile = { ...dbProfile, ...liveProfileUpdates };
 
-    const percentage = profile?.migratory_score || 0;
-    const recommendedCountry = analysis?.pais_sugerido || profile?.target_country || "Canadá";
-    const potential = percentage > 60 ? 'Sólido' : 'En progreso';
+    // Dynamically calculate score & opportunities based on merged live profile
+    const percentage = calculateOverallScore(profile);
+    
+    // Get live destination ranking
+    const destinations = scoreDestinations(profile);
+    const recommendedCountry = destinations.length > 0 ? destinations[0].country : (analysis?.pais_sugerido || "Canadá");
+    
+    const potential = percentage > 60 ? 'Sólido' : percentage > 30 ? 'En progreso' : 'Iniciando';
+
+    const handleProfileUpdate = (newFields) => {
+        setLiveProfileUpdates(prev => ({ ...prev, ...newFields }));
+    };
 
     return (
-        <main className="flex-1 w-full h-[calc(100vh-80px)] relative overflow-hidden bg-slate-950 text-white selection:bg-cyan-500/30 flex">
+        <main className="flex-1 w-full min-h-[calc(100vh-80px)] lg:h-[calc(100vh-80px)] relative overflow-y-auto lg:overflow-hidden bg-slate-950 text-white selection:bg-cyan-500/30 flex">
             
             {/* Background elements */}
             <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
@@ -101,7 +119,7 @@ const ProDashboard = ({ profile: initialProfile, analysis: initialAnalysis }) =>
                         Tu Agente KAI
                     </h2>
                     <div className="flex-1 min-h-0">
-                        <ProChat />
+                        <ProChat onProfileUpdate={handleProfileUpdate} initialProfile={profile} />
                     </div>
                 </div>
 

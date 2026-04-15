@@ -37,5 +37,8 @@
     "s8_cta1": "Take your Free Test Now",
     "s8_cta2": "Schedule a direct consultation",
     "s8_toast_title": "Direct Consultation",
-    "s8_toast_desc": "This feature is not implemented yet. You can request it in your next prompt! 🚀"
+    "s8_toast_desc": "This feature is not implemented yet. You can request it in your next prompt! 🚀",
+    "cookie_banner_text": "To ensure your privacy and a 'zero friction' experience, we use encrypted cookies. This allows us to securely save your progress anonymously as you chat with KAI.",
+    "cookie_banner_accept": "Understood, proceed",
+    "cookie_banner_decline": "Essentials only"
 }

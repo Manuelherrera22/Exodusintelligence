@@ -5,7 +5,7 @@ import * as z from 'zod';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Target, Loader2 } from 'lucide-react';
+import { Target, Loader2, Sparkles } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +15,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
 import { supabase } from '@/lib/customSupabaseClient';
 import { useSupabaseFunctions } from '@/hooks/useSupabaseFunctions';
+import { getPendingProfile } from '@/lib/profileStore';
 
 const BasicInfoForm = () => {
     const { t } = useTranslation('basic_info');
@@ -25,6 +26,9 @@ const BasicInfoForm = () => {
     // Fixed generically via hook parameter and capturing invoke function
     const { invokeFunction, loading } = useSupabaseFunctions('calculateScore');
     const [isSaving, setIsSaving] = useState(false);
+
+    const pendingData = React.useMemo(() => getPendingProfile(), []);
+    const prefilledData = pendingData?.profile || null;
 
     const educationLevels = [
         { value: 'primary', label: "Primaria / Básica" },
@@ -42,6 +46,11 @@ const BasicInfoForm = () => {
     
     const { register, handleSubmit, control, formState: { errors } } = useForm({
         resolver: zodResolver(basicInfoSchema),
+        defaultValues: {
+            country_of_origin: prefilledData?.country?.name || prefilledData?.country_of_origin || '',
+            age: prefilledData?.age || '',
+            education_level: prefilledData?.education || '',
+        }
     });
 
     const onSubmit = async (data) => {
@@ -110,6 +119,24 @@ const BasicInfoForm = () => {
                 <h1 className="text-3xl font-bold mb-3 text-white">{t('form_title')}</h1>
                 <p className="text-slate-400">{t('form_subtitle')}</p>
             </div>
+
+            {prefilledData && (
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-4 flex gap-3 text-left"
+                >
+                    <Sparkles className="w-5 h-5 text-purple-400 mt-0.5 shrink-0" />
+                    <div>
+                        <p className="text-sm text-purple-200 font-medium mb-0.5">
+                            KAI precargó tus datos
+                        </p>
+                        <p className="text-xs text-purple-200/60">
+                            Recuperamos tu perfil del chat para ahorrarte tiempo. Confirma que todo sea correcto.
+                        </p>
+                    </div>
+                </motion.div>
+            )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 

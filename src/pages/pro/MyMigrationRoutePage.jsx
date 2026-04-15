@@ -57,10 +57,10 @@ const MyMigrationRoutePage = () => {
     
     if (loading && steps.length === 0 && !noRouteAssigned) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 text-white p-4">
-                <Loader2 className="w-12 h-12 animate-spin text-fuchsia-500 mb-4" />
-                <h2 className="text-2xl font-bold text-slate-200">{t('loading_state.title')}</h2>
-                <p className="text-slate-400">{t('loading_state.subtitle')}</p>
+            <div className="min-h-screen flex flex-col items-center justify-center text-white p-4" style={{ backgroundColor: 'var(--hero-bg)' }}>
+                <Loader2 className="w-12 h-12 animate-spin text-purple-400 mb-4" />
+                <h2 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>{t('loading_state.title')}</h2>
+                <p style={{ color: 'var(--text-secondary)' }}>{t('loading_state.subtitle')}</p>
             </div>
         )
     }
@@ -71,12 +71,12 @@ const MyMigrationRoutePage = () => {
     
     if (error) {
          return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 text-white p-4 text-center">
+            <div className="min-h-screen flex flex-col items-center justify-center text-white p-4 text-center" style={{ backgroundColor: 'var(--hero-bg)' }}>
                 <ServerCrash className="w-16 h-16 text-red-500 mb-4" />
                 <h2 className="text-2xl font-bold text-red-400">{t('error_state.title')}</h2>
-                <p className="text-slate-400 max-w-md">{t('error_state.subtitle')}</p>
-                <p className="text-xs text-slate-500 mt-2">{error}</p>
-                 <Button onClick={() => navigate('/dashboard')} className="mt-6">
+                <p className="max-w-md" style={{ color: 'var(--text-secondary)' }}>{t('error_state.subtitle')}</p>
+                <p className="text-xs mt-2" style={{ color: 'var(--text-muted)' }}>{error}</p>
+                 <Button onClick={() => navigate('/dashboard')} className="mt-6 border border-white/10 hover:bg-white/10 transition-colors" style={{ backgroundColor: 'var(--surface-alpha)', color: 'var(--text-primary)' }}>
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     {t('back_to_dashboard')}
                 </Button>
@@ -90,8 +90,11 @@ const MyMigrationRoutePage = () => {
                 <title>{t('page_title')}</title>
                 <meta name="description" content={t('page_description')} />
             </Helmet>
-            <div className="min-h-screen bg-slate-900 text-white p-4 sm:p-8 relative overflow-hidden">
-                <GridPattern color="rgba(217, 70, 239, 0.08)" />
+            <div className="min-h-screen text-white p-4 sm:p-8 relative overflow-hidden" style={{ backgroundColor: 'var(--hero-bg)' }}>
+                <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+                    <div className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] bg-purple-600/[0.04] rounded-full blur-[120px]" />
+                    <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-cyan-600/[0.03] rounded-full blur-[100px]" />
+                </div>
                 <div className="relative z-10">
                     <motion.div
                         initial={{ opacity: 0, y: -20 }}
@@ -131,23 +134,23 @@ const MyMigrationRoutePage = () => {
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.5, delay: 0.2 }}
                             >
-                                <Card className="bg-slate-800/50 border-fuchsia-500/30 backdrop-blur-sm">
+                                <Card className="border backdrop-blur-xl" style={{ backgroundColor: 'var(--surface-alpha)', borderColor: 'var(--chat-border)' }}>
                                     <CardHeader>
-                                        <CardTitle className="flex items-center gap-2">
+                                        <CardTitle className="flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
                                             <Lightbulb className="text-yellow-400" />
                                             {t('smart_alerts.title')}
                                         </CardTitle>
-                                        <CardDescription>{t('smart_alerts.subtitle')}</CardDescription>
+                                        <CardDescription style={{ color: 'var(--text-secondary)' }}>{t('smart_alerts.subtitle')}</CardDescription>
                                     </CardHeader>
                                     <CardContent>
-                                        <ul className="space-y-4 text-sm">
+                                        <ul className="space-y-4 text-sm mt-2">
                                             {alerts.length > 0 ? alerts.map(alert => (
-                                                <li key={alert.id} className="flex items-start gap-3">
+                                                <li key={alert.id} className="flex items-start gap-3 p-3 rounded-xl border bg-white/5" style={{ borderColor: 'var(--chat-border)' }}>
                                                     {getAlertIcon(alert.criticidad)}
-                                                    <span><strong>{alert.titulo}:</strong> {alert.descripcion}</span>
+                                                    <span style={{ color: 'var(--text-secondary)' }}><strong style={{ color: 'var(--text-primary)' }}>{alert.titulo}:</strong> {alert.descripcion}</span>
                                                 </li>
                                             )) : (
-                                                <li className="text-slate-400">{t('smart_alerts.no_alerts')}</li>
+                                                <li style={{ color: 'var(--text-muted)' }}>{t('smart_alerts.no_alerts')}</li>
                                             )}
                                         </ul>
                                     </CardContent>
@@ -158,25 +161,25 @@ const MyMigrationRoutePage = () => {
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.5, delay: 0.4 }}
                             >
-                                <Card className="bg-slate-800/50 border-blue-500/30 backdrop-blur-sm">
+                                <Card className="border backdrop-blur-xl mt-6" style={{ backgroundColor: 'var(--surface-alpha)', borderColor: 'var(--chat-border)' }}>
                                     <CardHeader>
-                                        <CardTitle className="flex items-center gap-2">
-                                            <GitBranch className="text-blue-400" />
+                                        <CardTitle className="flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
+                                            <GitBranch className="text-cyan-400" />
                                             {t('alternative_routes.title')}
                                         </CardTitle>
-                                        <CardDescription>{t('alternative_routes.subtitle')}</CardDescription>
+                                        <CardDescription style={{ color: 'var(--text-secondary)' }}>{t('alternative_routes.subtitle')}</CardDescription>
                                     </CardHeader>
                                     <CardContent>
                                         {alternatives.length > 0 ? (
-                                            <ul className="space-y-2 text-sm">
+                                            <ul className="space-y-2 text-sm mt-2">
                                                 {alternatives.map(alt => (
                                                     <li key={alt.id}>
-                                                        <Badge variant="outline" className="border-blue-400/50 text-blue-300">{alt.nombre_ruta}</Badge>
+                                                        <Badge variant="outline" className="border-cyan-400/50 text-cyan-400 bg-cyan-400/10 px-3 py-1 rounded-lg">{alt.nombre_ruta}</Badge>
                                                     </li>
                                                 ))}
                                             </ul>
                                         ) : (
-                                             <p className="text-slate-400 text-sm">{t('alternative_routes.no_alternatives')}</p>
+                                             <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{t('alternative_routes.no_alternatives')}</p>
                                         )}
                                     </CardContent>
                                 </Card>

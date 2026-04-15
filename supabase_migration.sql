@@ -57,3 +57,14 @@ CREATE POLICY "Users can update own tasks" ON migration_tasks FOR UPDATE USING (
 CREATE INDEX IF NOT EXISTS idx_profiles_user ON migration_profiles(user_id);
 CREATE INDEX IF NOT EXISTS idx_tasks_user ON migration_tasks(user_id);
 CREATE INDEX IF NOT EXISTS idx_tasks_profile ON migration_tasks(profile_id);
+
+-- KAI Memory Storage
+CREATE TABLE IF NOT EXISTS kai_memory (
+  user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  messages JSONB DEFAULT '[]', -- Todo el historial de chat de OpenAI
+  extracted_data JSONB DEFAULT '{}', -- Resúmenes de documentos, insights
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE kai_memory ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can manage own memory" ON kai_memory FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);

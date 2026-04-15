@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import MigrationChat from '@/components/MigrationChat';
 import PricingModal from '@/components/PricingModal';
+import QuickAuthModal from '@/components/QuickAuthModal';
 import ScoreSimulator from '@/components/ScoreSimulator';
 import AchievementCards from '@/components/AchievementCards';
 import { generateReport } from '@/lib/reportGenerator';
@@ -210,7 +211,7 @@ const AnalyzingScreen = memo(() => {
 });
 
 // ── Results View ─────────────────────────────────────────────────────────────
-const ResultsView = memo(({ profile, score, destinations, diagnosis, tasks, onRegister, onLogin }) => {
+const ResultsView = memo(({ profile, score, destinations, diagnosis, tasks, onRegister, onLogin, session, onGoToDashboard }) => {
   const { t, i18n } = useTranslation('landing');
   const isEn = i18n.language?.startsWith('en');
   const [showPricing, setShowPricing] = useState(false);
@@ -226,7 +227,7 @@ const ResultsView = memo(({ profile, score, destinations, diagnosis, tasks, onRe
       {/* Score */}
       <div className="flex flex-col items-center mb-8">
         <ScoreRing value={score} size={140} />
-        <motion.p className="text-white/30 text-sm mt-4 text-center max-w-sm"
+        <motion.p className="text-sm mt-4 text-center max-w-sm" style={{ color: 'var(--text-secondary)' }}
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}>
           {diagnosis.summary}
         </motion.p>
@@ -235,8 +236,8 @@ const ResultsView = memo(({ profile, score, destinations, diagnosis, tasks, onRe
       {/* CRS Breakdown */}
       {diagnosis.crs && (
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2 }}
-          className="bg-white/[0.02] border border-white/[0.05] rounded-2xl p-5 mb-5">
-          <p className="text-xs text-white/30 uppercase tracking-widest mb-3 flex items-center gap-2">
+          className="border rounded-2xl p-5 mb-5" style={{ backgroundColor: 'var(--surface-alpha)', borderColor: 'var(--chat-border)' }}>
+          <p className="text-xs uppercase tracking-widest mb-3 flex items-center gap-2" style={{ color: 'var(--text-muted)' }}>
             <TrendingUp className="w-3.5 h-3.5" /> CRS {isEn ? 'Canada' : 'Canadá'} — {diagnosis.crs.total}/600
           </p>
           <div className="space-y-2">
@@ -248,13 +249,13 @@ const ResultsView = memo(({ profile, score, destinations, diagnosis, tasks, onRe
               { label: crsLabels[4], val: diagnosis.crs.transferability, max: 50 },
             ].map(item => (
               <div key={item.label} className="flex items-center gap-3">
-                <span className="text-[11px] text-white/30 w-24">{item.label}</span>
-                <div className="flex-1 h-1.5 bg-white/[0.04] rounded-full overflow-hidden">
-                  <motion.div className="h-full rounded-full bg-gradient-to-r from-purple-500/60 to-cyan-500/60"
+                <span className="text-[11px] w-24" style={{ color: 'var(--text-secondary)' }}>{item.label}</span>
+                <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--chat-border)' }}>
+                  <motion.div className="h-full rounded-full bg-gradient-to-r from-purple-500/80 to-cyan-500/80"
                     initial={{ width: 0 }} animate={{ width: (item.val/item.max*100) + '%' }}
                     transition={{ duration: 1.2, delay: 1.5 }} />
                 </div>
-                <span className="text-[11px] text-white/40 tabular-nums w-14 text-right">{item.val}/{item.max}</span>
+                <span className="text-[11px] tabular-nums w-14 text-right" style={{ color: 'var(--text-muted)' }}>{item.val}/{item.max}</span>
               </div>
             ))}
           </div>
@@ -270,20 +271,19 @@ const ResultsView = memo(({ profile, score, destinations, diagnosis, tasks, onRe
       )}
 
       {/* Top destinations */}
-      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.6 }}
-        className="mb-5">
-        <p className="text-xs text-white/30 uppercase tracking-widest mb-3 flex items-center gap-2">
+      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.6 }} className="mb-5">
+        <p className="text-xs uppercase tracking-widest mb-3 flex items-center gap-2" style={{ color: 'var(--text-muted)' }}>
           <Target className="w-3.5 h-3.5" /> {isEn ? 'Best destinations for you' : 'Mejores destinos para ti'}
         </p>
         <div className="space-y-2">
           {destinations.slice(0, 3).map((d, i) => (
-            <div key={d.code} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+            <div key={d.code} className="flex items-center gap-3 p-3 rounded-xl border" style={{ backgroundColor: 'var(--surface-alpha)', borderColor: 'var(--chat-border)' }}>
               <span className="text-lg">{i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉'}</span>
               <div className="flex-1">
-                <p className="text-sm text-white/70 font-medium">{d.country}</p>
-                <p className="text-[10px] text-white/25">{d.bestProgram.name}</p>
+                <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{d.country}</p>
+                <p className="text-[10px]" style={{ color: 'var(--text-secondary)' }}>{d.bestProgram.name}</p>
               </div>
-              <span className="text-sm font-bold text-white/50">{d.score}%</span>
+              <span className="text-sm font-bold" style={{ color: 'var(--text-muted)' }}>{d.score}%</span>
             </div>
           ))}
         </div>
@@ -291,20 +291,20 @@ const ResultsView = memo(({ profile, score, destinations, diagnosis, tasks, onRe
 
       {/* Tasks preview */}
       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 2 }}
-        className="bg-white/[0.02] border border-white/[0.05] rounded-2xl p-5 mb-8">
-        <p className="text-xs text-white/30 uppercase tracking-widest mb-3">
+        className="border rounded-2xl p-5 mb-8" style={{ backgroundColor: 'var(--surface-alpha)', borderColor: 'var(--chat-border)' }}>
+        <p className="text-xs uppercase tracking-widest mb-3" style={{ color: 'var(--text-muted)' }}>
           {isEn ? 'Your personalized action plan' : 'Tu plan de acción personalizado'}
         </p>
         {tasks.slice(0, 3).map((task, i) => (
-          <div key={task.id} className="flex gap-2.5 py-2.5 px-3 rounded-lg mb-1 bg-white/[0.02] border border-white/[0.04]">
+          <div key={task.id} className="flex gap-2.5 py-2.5 px-3 rounded-lg mb-1 border" style={{ backgroundColor: 'var(--chat-border)', borderColor: 'var(--chat-border)' }}>
             <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 mt-0.5 ${
-              task.priority === 'critical' ? 'border-red-400/30' : task.priority === 'high' ? 'border-amber-400/30' : 'border-white/10'
+              task.priority === 'critical' ? 'border-red-400/50' : task.priority === 'high' ? 'border-amber-400/50' : 'border-gray-500/30'
             }`}>
-              <span className="text-[8px] text-white/20">{i + 1}</span>
+              <span className="text-[8px]" style={{ color: 'var(--text-secondary)' }}>{i + 1}</span>
             </div>
             <div>
-              <p className="text-xs text-white/60 font-medium">{task.title}</p>
-              <p className="text-[10px] text-white/25 mt-0.5">{task.duration} · +{task.points} pts</p>
+              <p className="text-xs font-medium" style={{ color: 'var(--text-primary)' }}>{task.title}</p>
+              <p className="text-[10px] mt-0.5" style={{ color: 'var(--text-secondary)' }}>{task.duration} · +{task.points} pts</p>
             </div>
           </div>
         ))}
@@ -363,22 +363,35 @@ const ResultsView = memo(({ profile, score, destinations, diagnosis, tasks, onRe
         </button>
 
         {/* Secondary: Account */}
-        <button 
-          type="button"
-          onClick={onRegister}
-          className="w-full py-3 rounded-xl border font-medium text-xs active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2 hover:opacity-80"
-          style={{ backgroundColor: 'var(--surface-alpha)', borderColor: 'var(--chat-border)', color: 'var(--text-secondary)' }}
-        >
-          {isEn ? 'Save my results — Create free account' : 'Guardar mis resultados — Crear cuenta gratis'}
-        </button>
-        <button 
-          type="button"
-          onClick={onLogin} 
-          className="w-full py-2 text-xs transition-colors hover:opacity-100"
-          style={{ color: 'var(--text-muted)' }}
-        >
-          {isEn ? 'I already have an account' : 'Ya tengo cuenta'}
-        </button>
+        {!session ? (
+            <>
+                <button 
+                  type="button"
+                  onClick={onRegister}
+                  className="w-full py-3 rounded-xl border font-medium text-xs active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2 hover:opacity-80"
+                  style={{ backgroundColor: 'var(--surface-alpha)', borderColor: 'var(--chat-border)', color: 'var(--text-secondary)' }}
+                >
+                  {isEn ? 'Save my results — Create free account' : 'Guardar mis resultados — Crear cuenta gratis'}
+                </button>
+                <button 
+                  type="button"
+                  onClick={onLogin} 
+                  className="w-full py-2 text-xs transition-colors hover:opacity-100"
+                  style={{ color: 'var(--text-muted)' }}
+                >
+                  {isEn ? 'I already have an account' : 'Ya tengo cuenta'}
+                </button>
+            </>
+        ) : (
+            <button 
+                  type="button"
+                  onClick={onGoToDashboard}
+                  className="w-full py-3 rounded-xl border font-medium text-xs active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2 hover:opacity-100 hover:border-purple-500/50"
+                  style={{ backgroundColor: 'var(--surface-alpha)', borderColor: 'var(--chat-border)', color: 'white' }}
+                >
+                  {isEn ? 'Save and go to Dashboard' : 'Guardar y volver a mi Dashboard'}
+            </button>
+        )}
       </motion.div>
 
       {/* Pricing Modal */}
@@ -394,13 +407,18 @@ const ResultsView = memo(({ profile, score, destinations, diagnosis, tasks, onRe
 // ═══════════════════════════════════════════════════════════════════════════════
 //  MAIN FLOW
 // ═══════════════════════════════════════════════════════════════════════════════
-const DiscoveryFlow = () => {
+import { useAuth } from '@/contexts/SupabaseAuthContext';
+
+const DiscoveryFlow = ({ startPhase = 'hero' }) => {
   const navigate = useNavigate();
+  const { session } = useAuth();
   const { t, i18n } = useTranslation('landing');
-  const [phase, setPhase] = useState('hero'); // hero | chat | analyzing | results
+  const [phase, setPhase] = useState(startPhase); // hero | chat | analyzing | results
   const [results, setResults] = useState(null);
   const [storyIndex, setStoryIndex] = useState(0);
   const [showCTA, setShowCTA] = useState(false);
+  const [authModalConfig, setAuthModalConfig] = useState({ isOpen: false, mode: 'login' });
+  const isEn = i18n.language?.startsWith('en');
 
   // Rebuild stories when language changes
   const allStories = useMemo(() => buildStories(t), [t, i18n.language]);
@@ -449,7 +467,20 @@ const DiscoveryFlow = () => {
           <Globe className="w-4 h-4 text-purple-400/50" />
           <span className="text-sm font-semibold text-white/40 tracking-tight">Exodus</span>
         </motion.div>
-        <LanguageSwitcher />
+        <div className="flex items-center gap-4">
+          <LanguageSwitcher />
+          {phase === 'hero' && (
+             !session ? (
+                 <button onClick={() => setAuthModalConfig({ isOpen: true, mode: 'login' })} className="text-xs font-medium text-white/50 hover:text-white transition-colors border border-white/10 hover:border-white/20 px-3 py-1.5 rounded-lg">
+                   {isEn ? 'Log In' : 'Iniciar Sesión'}
+                 </button>
+             ) : (
+                 <button onClick={() => navigate('/dashboard')} className="text-xs font-medium text-purple-400 hover:text-purple-300 transition-colors border border-purple-500/20 px-3 py-1.5 rounded-lg">
+                   Dashboard
+                 </button>
+             )
+          )}
+        </div>
       </div>
 
       <AnimatePresence mode="wait">
@@ -618,12 +649,22 @@ const DiscoveryFlow = () => {
           <motion.div key="results" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <ResultsView
               {...results}
-              onRegister={() => navigate('/register')}
-              onLogin={() => navigate('/login')}
+              session={session}
+              onRegister={() => setAuthModalConfig({ isOpen: true, mode: 'register' })}
+              onLogin={() => setAuthModalConfig({ isOpen: true, mode: 'login' })}
+              onGoToDashboard={() => navigate('/dashboard', { replace: true })}
             />
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Zero Friction Auth Modal */}
+      <QuickAuthModal 
+        isOpen={authModalConfig.isOpen}
+        mode={authModalConfig.mode}
+        isEn={isEn}
+        onClose={() => setAuthModalConfig({ isOpen: false, mode: 'login' })}
+      />
     </div>
   );
 };

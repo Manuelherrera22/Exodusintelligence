@@ -56,7 +56,10 @@ export async function saveProfileToSupabase(userId, profile, score, crsTotal) {
     .select()
     .single();
 
-  if (error) console.error('Save profile error:', error);
+  if (error) {
+    console.error('Save profile error, falling back to local storage:', error);
+    localStorage.setItem(`fallback_profile_${userId}`, JSON.stringify({ profile, score, crsTotal, timestamp: Date.now() }));
+  }
   return { data, error };
 }
 
@@ -91,7 +94,24 @@ export async function loadProfileFromSupabase(userId) {
     .eq('user_id', userId)
     .single();
 
-  if (error && error.code !== 'PGRST116') console.error('Load profile error:', error);
+  if (error && error.code !== 'PGRST116') {
+      console.error('Load profile error:', error);
+  }
+  
+  if (!data) {
+      // Try local storage fallback
+      const fallback = localStorage.getItem(`fallback_profile_${userId}`);
+      if (fallback) {
+          try {
+              const parsed = JSON.parse(fallback);
+              return {
+                  raw_profile: parsed.profile,
+                  overall_score: parsed.score,
+                  crs_total: parsed.crsTotal
+              };
+          } catch(e) {}
+      }
+  }
   return data;
 }
 

@@ -37,5 +37,8 @@
     "s8_cta1": "Realiza tu Test Gratuito Ahora",
     "s8_cta2": "Agenda una asesoría directa",
     "s8_toast_title": "Asesoría Directa",
-    "s8_toast_desc": "¡Esta función no está implementada aún! Puedes solicitarla en tu próximo prompt. 🚀"
+    "s8_toast_desc": "¡Esta función no está implementada aún! Puedes solicitarla en tu próximo prompt. 🚀",
+    "cookie_banner_text": "Para asegurar tu privacidad y una experiencia 'cero fricción', utilizamos cookies cifradas. Esto nos permite guardar tu progreso de forma anónima mientras conversas con KAI.",
+    "cookie_banner_accept": "Entendido, adelante",
+    "cookie_banner_decline": "Solo esenciales"
 }

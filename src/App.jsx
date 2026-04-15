@@ -50,7 +50,7 @@ function App() {
         <Routes location={location} key={location.pathname}>
           
           {/* Zero Friction Entry — the Discovery Flow */}
-          <Route path="/" element={<DiscoveryFlow />} />
+          <Route path="/" element={<SimulatorProvider><DiscoveryFlow /></SimulatorProvider>} />
           <Route path="/explore" element={<SimulatorProvider><GeneralPage /></SimulatorProvider>} />
           <Route path="/premium" element={<PremiumPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
