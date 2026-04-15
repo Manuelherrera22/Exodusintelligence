@@ -414,7 +414,7 @@ const MigrationChat = ({ onComplete }) => {
   const hasSpeech = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-80px)] max-w-2xl w-full mx-auto relative z-10 px-4 pt-2">
+    <div className="flex flex-col flex-1 max-w-2xl w-full mx-auto relative z-10 px-4">
       <div className="flex-1 rounded-3xl border shadow-[0_0_80px_rgba(0,0,0,0.4)] backdrop-blur-2xl flex flex-col overflow-hidden relative" style={{ backgroundColor: 'var(--chat-bg)', borderColor: 'var(--chat-border)' }}>
 
         <ProfileProgress percent={completion} milestones={milestones} />
@@ -518,13 +518,13 @@ const MigrationChat = ({ onComplete }) => {
               onChange={(e) => setInputVal(e.target.value)}
               placeholder={voice.isListening ? t('chat_placeholder_listening') : t('chat_placeholder')}
               autoComplete="off" spellCheck="false" disabled={isTyping}
-              className="flex-1 px-3 py-4 bg-transparent text-white text-sm placeholder:text-white/25 focus:outline-none disabled:opacity-40"
+              className="flex-1 min-w-0 px-2 sm:px-3 py-4 bg-transparent text-white text-sm placeholder:text-white/25 focus:outline-none disabled:opacity-40"
             />
 
             {/* Voice button */}
             {hasSpeech && (
               <button type="button" onClick={voice.toggle} disabled={isTyping}
-                className={`p-2.5 rounded-xl transition-all disabled:opacity-20 ${
+                className={`p-2.5 shrink-0 rounded-xl transition-all disabled:opacity-20 ${
                   voice.isListening
                     ? 'text-red-400 bg-red-500/10 animate-pulse'
                     : 'text-white/25 hover:text-purple-400/60 hover:bg-white/[0.04]'
@@ -537,7 +537,7 @@ const MigrationChat = ({ onComplete }) => {
 
             {/* Send button */}
             <button type="submit" disabled={(!inputVal.trim() && !attachment) || isTyping}
-              className="mr-2.5 w-10 h-10 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-600 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(139,92,246,0.2)] disabled:opacity-15 disabled:cursor-not-allowed hover:scale-105 active:scale-95 transition-all duration-200"
+              className="mr-2 px-3 sm:mr-2.5 sm:px-0 sm:w-10 h-10 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-600 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(139,92,246,0.2)] disabled:opacity-15 disabled:cursor-not-allowed hover:scale-105 active:scale-95 transition-all duration-200"
             >
               <Send className="w-4 h-4 text-white" />
             </button>

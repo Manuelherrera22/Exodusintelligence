@@ -323,19 +323,19 @@ const ProChat = ({ onProfileUpdate, initialProfile }) => {
           <input type="text" value={inputVal} onChange={(e) => setInputVal(e.target.value)}
             placeholder={voice.isListening ? "Escuchando..." : "Mensaje para KAI..."}
             autoComplete="off" spellCheck="false" disabled={isTyping}
-            className="flex-1 px-3 py-4 bg-transparent text-white text-sm placeholder:text-white/30 focus:outline-none disabled:opacity-40"
+            className="flex-1 min-w-0 px-2 sm:px-3 py-4 bg-transparent text-white text-sm placeholder:text-white/30 focus:outline-none disabled:opacity-40"
           />
 
           {hasSpeech && (
             <button type="button" onClick={voice.toggle} disabled={isTyping}
-              className={`p-2.5 rounded-xl transition-all disabled:opacity-20 ${voice.isListening ? 'text-cyan-400 bg-cyan-500/10 animate-pulse' : 'text-white/30 hover:text-cyan-400 hover:bg-white/[0.05]'}`}
+              className={`p-2.5 shrink-0 rounded-xl transition-all disabled:opacity-20 ${voice.isListening ? 'text-cyan-400 bg-cyan-500/10 animate-pulse' : 'text-white/30 hover:text-cyan-400 hover:bg-white/[0.05]'}`}
             >
               {voice.isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
             </button>
           )}
 
           <button type="submit" disabled={(!inputVal.trim() && !attachment) || isTyping}
-            className="mr-2.5 w-10 h-10 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(34,211,238,0.2)] disabled:opacity-20 disabled:grayscale transition-all duration-200"
+            className="mr-2 px-3 sm:mr-2.5 sm:px-0 sm:w-10 h-10 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(34,211,238,0.2)] disabled:opacity-20 disabled:grayscale transition-all duration-200"
           >
             <Send className="w-4 h-4 text-white" />
           </button>
