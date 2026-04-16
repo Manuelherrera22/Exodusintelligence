@@ -65,6 +65,14 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 );
 
 -- Constraint UNIQUE para user_id (necesario para el trigger de auto-creación)
+-- Primero limpiar duplicados si existen (conserva la fila más reciente por user_id)
+DELETE FROM public.profiles
+WHERE id NOT IN (
+    SELECT DISTINCT ON (user_id) id
+    FROM public.profiles
+    ORDER BY user_id, updated_at DESC NULLS LAST
+);
+
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'profiles_user_id_unique') THEN
