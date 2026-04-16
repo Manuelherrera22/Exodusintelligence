@@ -81,10 +81,11 @@ const Message = memo(({ msg }) => {
   );
 });
 
-function useVoiceInput(lang) {
+function useVoiceInput(lang, onUpdate) {
   const [isListening, setIsListening] = useState(false);
-  const [transcript, setTranscript] = useState('');
   const recognitionRef = useRef(null);
+  const finalTranscriptRef = useRef('');
+  const manualStopRef = useRef(false);
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -96,40 +97,58 @@ function useVoiceInput(lang) {
     recognition.continuous = true;
 
     recognition.onresult = (event) => {
-      let text = '';
-      for (let i = 0; i < event.results.length; i++) {
-        text += event.results[i][0].transcript;
+      if (manualStopRef.current) return;
+
+      let interim = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const result = event.results[i];
+        if (result.isFinal) {
+          finalTranscriptRef.current += result[0].transcript;
+        } else {
+          interim += result[0].transcript;
+        }
       }
-      setTranscript(text);
+
+      const fullText = finalTranscriptRef.current + interim;
+      if (onUpdate) onUpdate(fullText);
     };
 
     recognition.onerror = () => setIsListening(false);
-    recognition.onend = () => setIsListening(false);
+    recognition.onend = () => {
+      setIsListening(false);
+      manualStopRef.current = false;
+    };
     recognitionRef.current = recognition;
 
     return () => { try { recognition.stop(); } catch(e) {} };
-  }, [lang]);
+  }, [lang, onUpdate]);
 
-  const toggle = useCallback(() => {
+  const toggle = useCallback((initialText = '') => {
     if (!recognitionRef.current) return;
     if (isListening) {
+      manualStopRef.current = true;
       recognitionRef.current.stop();
       setIsListening(false);
     } else {
-      setTranscript('');
-      recognitionRef.current.start();
-      setIsListening(true);
+      manualStopRef.current = false;
+      const prefix = initialText ? (initialText.endsWith(' ') ? initialText : initialText + ' ') : '';
+      finalTranscriptRef.current = prefix;
+      try {
+        recognitionRef.current.start();
+        setIsListening(true);
+      } catch (e) {}
     }
   }, [isListening]);
 
   const stop = useCallback(() => {
     if (recognitionRef.current && isListening) {
+      manualStopRef.current = true;
       recognitionRef.current.stop();
       setIsListening(false);
     }
   }, [isListening]);
 
-  return { isListening, transcript, toggle, stop };
+  return { isListening, toggle, stop };
 }
 
 import { supabase } from '@/lib/customSupabaseClient';
@@ -143,16 +162,13 @@ const ProChat = ({ onProfileUpdate, initialProfile }) => {
   
   const scrollRef = useRef(null);
   const fileInputRef = useRef(null);
-  const voice = useVoiceInput(i18n.language);
+  const inputRef = useRef(null);
+  const voice = useVoiceInput(i18n.language, setInputVal);
 
   // Focus and scroll
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages, isTyping]);
-
-  useEffect(() => {
-    if (voice.transcript) setInputVal(voice.transcript);
-  }, [voice.transcript]);
 
   // Initial greeting or memory load
   const initialized = useRef(false);
@@ -221,6 +237,7 @@ const ProChat = ({ onProfileUpdate, initialProfile }) => {
     
     setMessages(currentMsgs);
     setInputVal('');
+    if (inputRef.current) inputRef.current.style.height = '52px';
     setAttachment(null);
     setIsTyping(true);
 
@@ -320,14 +337,26 @@ const ProChat = ({ onProfileUpdate, initialProfile }) => {
             <Paperclip className="w-4 h-4" />
           </button>
           
-          <input type="text" value={inputVal} onChange={(e) => setInputVal(e.target.value)}
+          <textarea ref={inputRef} value={inputVal} 
+            onChange={(e) => {
+              setInputVal(e.target.value);
+              e.target.style.height = 'auto';
+              e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend(e);
+              }
+            }}
             placeholder={voice.isListening ? "Escuchando..." : "Mensaje para KAI..."}
             autoComplete="off" spellCheck="false" disabled={isTyping}
-            className="flex-1 min-w-0 px-2 sm:px-3 py-4 bg-transparent text-white text-sm placeholder:text-white/30 focus:outline-none disabled:opacity-40"
+            className="flex-1 min-w-0 px-2 sm:px-3 py-4 bg-transparent text-white text-sm placeholder:text-white/30 focus:outline-none disabled:opacity-40 max-h-32 overflow-y-auto resize-none m-0"
+            style={{ scrollbarWidth: 'none', height: '52px' }}
           />
 
           {hasSpeech && (
-            <button type="button" onClick={voice.toggle} disabled={isTyping}
+            <button type="button" onClick={() => voice.toggle(inputVal)} disabled={isTyping}
               className={`p-2.5 shrink-0 rounded-xl transition-all disabled:opacity-20 ${voice.isListening ? 'text-cyan-400 bg-cyan-500/10 animate-pulse' : 'text-white/30 hover:text-cyan-400 hover:bg-white/[0.05]'}`}
             >
               {voice.isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
