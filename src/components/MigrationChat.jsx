@@ -239,6 +239,7 @@ const MigrationChat = ({ onComplete }) => {
   const [reportReady, setReportReady] = useState(false);
   const scrollRef = useRef(null);
   const inputRef = useRef(null);
+  const fileInputRef = useRef(null);
   const voice = useVoiceInput(i18n.language, setInputVal);
 
   // Translated data
