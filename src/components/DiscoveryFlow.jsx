@@ -636,7 +636,7 @@ const DiscoveryFlow = ({ startPhase = 'hero' }) => {
             animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
             exit={{ opacity: 0, y: -20 }} 
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute inset-0 pt-[72px] pb-4 md:pt-[84px] z-10 flex flex-col">
+            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column', paddingTop: '72px', paddingBottom: '16px', zIndex: 10 }}>
             <MigrationChat onComplete={handleChatComplete} />
           </motion.div>
         )}

@@ -429,8 +429,8 @@ const MigrationChat = ({ onComplete }) => {
   const hasSpeech = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 
   return (
-    <div className="flex flex-col flex-1 max-w-2xl w-full mx-auto relative z-10 px-4">
-      <div className="flex-1 rounded-3xl border shadow-[0_0_80px_rgba(0,0,0,0.4)] backdrop-blur-2xl flex flex-col overflow-hidden relative" style={{ backgroundColor: 'var(--chat-bg)', borderColor: 'var(--chat-border)' }}>
+    <div className="flex flex-col flex-1 min-h-0 max-w-2xl w-full mx-auto relative z-10 px-4" style={{ backgroundColor: 'var(--hero-bg)' }}>
+      <div className="flex-1 min-h-0 rounded-3xl border shadow-[0_0_80px_rgba(0,0,0,0.4)] backdrop-blur-2xl flex flex-col overflow-hidden relative" style={{ backgroundColor: 'var(--chat-bg)', borderColor: 'var(--chat-border)' }}>
 
         <ProfileProgress percent={completion} milestones={milestones} />
 
