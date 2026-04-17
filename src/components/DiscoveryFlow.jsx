@@ -414,6 +414,7 @@ const DiscoveryFlow = ({ startPhase = 'hero' }) => {
   const { session } = useAuth();
   const { t, i18n } = useTranslation('landing');
   const [phase, setPhase] = useState(startPhase); // hero | chat | analyzing | results
+  const [track, setTrack] = useState('migration'); // migration | fiscal
   const [results, setResults] = useState(null);
   const [storyIndex, setStoryIndex] = useState(0);
   const [showCTA, setShowCTA] = useState(false);
@@ -531,6 +532,21 @@ const DiscoveryFlow = ({ startPhase = 'hero' }) => {
                   >
                     <p style={{ color: 'var(--text-secondary)' }} className="text-sm mb-4 md:mb-5" dangerouslySetInnerHTML={{ __html: t('cta_question') }} />
 
+                    <div className="flex items-center gap-3 mb-5">
+                      <button 
+                        onClick={() => setTrack('migration')} 
+                        className={`flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all border ${track === 'migration' ? 'bg-purple-600/20 text-purple-200 border-purple-500/30' : 'bg-white/[0.02] text-white/30 border-white/5 hover:bg-white/5'}`}
+                      >
+                        {isEn ? '🌍 Global Migration' : '🌍 Migración Global'}
+                      </button>
+                      <button 
+                        onClick={() => setTrack('fiscal')} 
+                        className={`flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all border ${track === 'fiscal' ? 'bg-cyan-600/20 text-cyan-200 border-cyan-500/30' : 'bg-white/[0.02] text-white/30 border-white/5 hover:bg-white/5'}`}
+                      >
+                        {isEn ? '💼 Tax & Corporate' : '💼 Estrategia Fiscal'}
+                      </button>
+                    </div>
+
                     <button
                       onClick={() => setPhase('chat')}
                       className="group w-full max-w-md flex items-center gap-3 px-5 py-4 rounded-2xl border hover:border-purple-500/20 transition-all duration-300 cursor-text"
@@ -637,7 +653,7 @@ const DiscoveryFlow = ({ startPhase = 'hero' }) => {
             exit={{ opacity: 0, y: -20 }} 
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', flexDirection: 'column', paddingTop: '72px', paddingBottom: '16px', zIndex: 10 }}>
-            <MigrationChat onComplete={handleChatComplete} />
+            <MigrationChat onComplete={handleChatComplete} track={track} />
           </motion.div>
         )}
 

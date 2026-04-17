@@ -226,7 +226,7 @@ function buildFallbackQuestions(t) {
   ];
 }
 
-const MigrationChat = ({ onComplete }) => {
+const MigrationChat = ({ onComplete, track = 'migration' }) => {
   const { t, i18n } = useTranslation('landing');
   const [messages, setMessages] = useState([]);
   const [inputVal, setInputVal] = useState('');
@@ -274,7 +274,7 @@ const MigrationChat = ({ onComplete }) => {
     
     const init = async () => {
       try {
-        const res = await chatWithKAI([], null, i18n.language);
+        const res = await chatWithKAI([], null, i18n.language, track);
         const msg = res.choices[0].message;
         setMessages(msg.content ? [msg] : [{ role: 'assistant', content: t('chat_init_msg') }]);
       } catch (e) {
@@ -389,7 +389,7 @@ const MigrationChat = ({ onComplete }) => {
   }, [inputVal, isTyping, messages, profile, attachment, voice, fallbackMode, handleFallbackAnswer, FALLBACK_QUESTIONS, t]);
 
   const processLoop = async (msgs, currentProfile, imageBase64 = null) => {
-    const response = await chatWithKAI(msgs, imageBase64, i18n.language);
+    const response = await chatWithKAI(msgs, imageBase64, i18n.language, track);
     const resMsg = response.choices[0].message;
     let nextMsgs = [...msgs, resMsg];
     setMessages([...nextMsgs]);
